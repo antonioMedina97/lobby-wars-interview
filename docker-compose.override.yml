@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  php-signaturit:
+    volumes:
+      - .:/opt/app/
+
+  nginx:
+    volumes:
+      - "./public:/opt/app/public"

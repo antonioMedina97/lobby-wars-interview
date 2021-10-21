@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  php-signaturit:
+    build:
+      context: .
+      dockerfile: resources/docker/php/Dockerfile
+    depends_on:
+      - mysql
+    container_name: php-signaturit
+
+  nginx:
+    build:
+      context: .
+      dockerfile: resources/docker/nginx/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - php-signaturit
+
+  mysql:
+    image: library/mysql:8.0.20
+    volumes:
+      - "./resources/mysql/docker/config/my.cfg:/etc/mysql/conf.d/config-file.cnf"
+      - "./resources/migrations/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql"
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_USER: root
+      MYSQL_DATABASE: signaturit
+      MYSQL_ROOT_PASSWORD: root
+      TZ: ${TIMEZONE:-Europe/Amsterdam}
