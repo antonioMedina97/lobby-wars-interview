@@ -17,15 +17,15 @@ class PDOContractReadModel implements ContractReadModel
     {
         $contractsLetters = array_unique(array_merge_recursive(...$contracts));
 
-        $qMarks = str_repeat('?,', count($contractsLetters) - 1) . '?';
+        $qMarks = str_repeat('? or contract_letter =', count($contractsLetters) - 1) . '?';
 
         $query = <<<SQL
-select 
-       contract_letter as letter,
-       contract_letter_score as score
-from contracts
-where contract_letter = $qMarks
-SQL;
+                        select 
+                            contract_letter as letter,
+                            contract_letter_score as score
+                        from contracts
+                        where contract_letter = $qMarks 
+                    SQL;
 
         $pdoStatement = $this->mysqlClient->prepare($query);
         $pdoStatement->execute($contractsLetters);
